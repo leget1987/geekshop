@@ -1,4 +1,8 @@
 {
     "python.pythonPath": "/home/leget/django/geekshop/venv/bin/python",
-    "editor.fontSize": 14
+    "editor.fontSize": 14,
+    "python.formatting.blackArgs": [
+        "-l 120"
+    ],
+    "python.formatting.provider": "black"
 }
