@@ -13,8 +13,9 @@ class OrderForm(forms.ModelForm):
         model = Order
         exclude = ("user",)
 
-
 class OrderItemForm(forms.ModelForm):
+    price = forms.CharField(label="цена", required=False)
+
     def __init__(self, *args, **kwargs):
         super(OrderItemForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
