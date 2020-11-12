@@ -6,6 +6,8 @@ from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 
 from .models import Contact, Product, ProductCategory
+from django.views.generic.detail import DetailView
+from django.views.generic import TemplateView
 
 
 def main(request):
@@ -23,6 +25,58 @@ def get_hot_product():
 def get_same_products(hot_product):
     same_products = Product.objects.filter(category=hot_product.category, is_active=True).exclude(pk=hot_product.pk)[:3]
     return same_products
+
+
+class ProductView(TemplateView):
+    model = Product
+    template_name = "mainapp/product.html"
+
+    def get_context_data(self, pk, **kwargs):
+        title = "продукты"
+        content = {
+            "title": title,
+            "links_menu": ProductCategory.objects.filter(is_active=True),
+            "product": get_object_or_404(Product, pk=pk),
+            "media_url": settings.MEDIA_URL,
+        }
+        return content
+
+
+# Что здесь ни так? Сайт работает, но контент не передается похоже. Всю голову сломал
+
+# class ProductsView(ProductView):
+#     template_name = "mainapp/products_list.html"
+
+#     def get_context_data(self, pk=None, page=1, **kwargs):
+#         content = super(ProductView, self).get_context_data(**kwargs)
+
+#         if pk is not None:
+#             if str(pk) == str(0):
+#                 category = {"pk": 0, "name": "все"}
+#                 products = Product.objects.filter(is_active=True, category__is_active=True).order_by("price")
+#             else:
+#                 category = get_object_or_404(ProductCategory, pk=pk)
+#                 products = Product.objects.filter(category__pk=pk, is_active=True, category__is_active=True).order_by(
+#                     "price"
+#                 )
+
+#             paginator = Paginator(products, 2)
+#             try:
+#                 products_paginator = paginator.page(page)
+#             except PageNotAnInteger:
+#                 products_paginator = paginator.page(1)
+#             except EmptyPage:
+#                 products_paginator = paginator.page(paginator.num_pages)
+
+#             content["products"] = products_paginator
+#             content["category"] = category
+#             return content
+
+#         hot_product = get_hot_product()
+#         same_products = get_same_products(hot_product)
+#         content["same_products"] = same_products
+#         content["hot_product"] = hot_product
+#         return content
 
 
 def products(request, pk=None, page=1):
@@ -67,20 +121,32 @@ def products(request, pk=None, page=1):
     return render(request, "mainapp/products.html", content)
 
 
-def product(request, pk):
-    title = "продукты"
-    content = {
-        "title": title,
-        "links_menu": ProductCategory.objects.filter(is_active=True),
-        "product": get_object_or_404(Product, pk=pk),
-        "media_url": settings.MEDIA_URL,
-    }
-    return render(request, "mainapp/product.html", content)
+# def product(request, pk):
+#     title = "продукты"
+#     content = {
+#         "title": title,
+#         "links_menu": ProductCategory.objects.filter(is_active=True),
+#         "product": get_object_or_404(Product, pk=pk),
+#         "media_url": settings.MEDIA_URL,
+#     }
+#     return render(request, "mainapp/product.html", content)
 
 
-def contact(request):
-    title = "о нас"
-    visit_date = timezone.now()
-    locations = Contact.objects.all()
-    content = {"title": title, "visit_date": visit_date, "locations": locations}
-    return render(request, "mainapp/contact.html", content)
+# def contact(request):
+#     title = "о нас"
+#     visit_date = timezone.now()
+#     locations = Contact.objects.all()
+#     content = {"title": title, "visit_date": visit_date, "locations": locations}
+#     return render(request, "mainapp/contact.html", content)
+
+
+class ContactView(TemplateView):
+    model = Contact
+    template_name = "mainapp/contact.html"
+
+    def get_context_data(self, **kwargs):
+        title = "о нас"
+        visit_date = timezone.now()
+        locations = Contact.objects.all()
+        content = {"title": title, "visit_date": visit_date, "locations": locations}
+        return content
