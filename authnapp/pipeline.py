@@ -1,14 +1,15 @@
+import os
+import urllib.request
 from collections import OrderedDict
 from datetime import datetime
 from urllib.parse import urlencode, urlunparse
-import urllib3
-import os
-import urllib.request
+
 import requests
+import urllib3
 from django.utils import timezone
 from social_core.exceptions import AuthForbidden
 
-from authnapp.models import ShopUserProfile, ShopUser
+from authnapp.models import ShopUser, ShopUserProfile
 
 
 def save_user_profile(backend, user, response, *args, **kwargs):

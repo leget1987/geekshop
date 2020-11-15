@@ -1,8 +1,8 @@
 from django.conf import settings
 from django.db import models
+from django.shortcuts import get_object_or_404
 
 from mainapp.models import Product
-from django.shortcuts import get_object_or_404
 
 
 class Order(models.Model):
