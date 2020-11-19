@@ -4,10 +4,10 @@ from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
+from django.views.generic import TemplateView
+from django.views.generic.detail import DetailView
 
 from .models import Contact, Product, ProductCategory
-from django.views.generic.detail import DetailView
-from django.views.generic import TemplateView
 
 
 def main(request):
@@ -141,7 +141,6 @@ def products(request, pk=None, page=1):
 
 
 class ContactView(TemplateView):
-    model = Contact
     template_name = "mainapp/contact.html"
 
     def get_context_data(self, **kwargs):

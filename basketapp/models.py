@@ -1,9 +1,8 @@
 from django.conf import settings
 from django.db import models
-
-from mainapp.models import Product
 from django.shortcuts import get_object_or_404
 
+from mainapp.models import Product
 
 # class BasketQuerySet(models.QuerySet):
 #     def delete(self, *args, **kwargs):
