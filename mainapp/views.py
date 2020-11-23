@@ -5,6 +5,7 @@ from django.core.cache import cache
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
+from django.views.decorators.cache import cache_page
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 
@@ -110,7 +111,6 @@ def get_hot_product_list():
     return (hot_product, hot_list)
 
 
-
 class ProductView(TemplateView):
     model = Product
     template_name = "mainapp/product.html"
@@ -203,6 +203,7 @@ def products(request, pk=None, page=1):
     }
     return render(request, "mainapp/products.html", content)
 
+
 # def product(request, pk):
 #     title = "продукты"
 #     content = {
@@ -222,12 +223,10 @@ def products(request, pk=None, page=1):
 #     return render(request, "mainapp/contact.html", content)
 
 
-class ContactView(TemplateView):
-    template_name = "mainapp/contact.html"
-
-    def get_context_data(self, **kwargs):
-        title = "о нас"
-        visit_date = timezone.now()
-        locations = Contact.objects.all()
-        content = {"title": title, "visit_date": visit_date, "locations": locations}
-        return content
+@cache_page(600)
+def contact(request):
+    title = "о нас"
+    visit_date = timezone.now()
+    locations = Contact.objects.all()
+    content = {"title": title, "visit_date": visit_date, "locations": locations}
+    return render(request, "mainapp/contact.html", content)
