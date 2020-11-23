@@ -33,9 +33,9 @@ class Basket(models.Model):
     def get_item(pk):
         return get_object_or_404(Basket, pk=pk)
 
-    # @staticmethod
-    # def get_items(user):
-    #     return Basket.objects.filter(user=user).order_by("product__category")
+    @staticmethod
+    def get_items(user):
+        return Basket.objects.filter(user=user).order_by("product__category")
 
     @cached_property
     def get_items_cached(self):
