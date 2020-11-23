@@ -5,7 +5,6 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.views.generic import TemplateView
-from django.views.generic.detail import DetailView
 
 from .models import Contact, Product, ProductCategory
 
@@ -17,66 +16,21 @@ def main(request):
     return render(request, "mainapp/index.html", content)
 
 
-def get_hot_product():
-    products = Product.objects.filter(is_active=True, category__is_active=True)
-    return random.sample(list(products), 1)[0]
+# def get_hot_product():
+#     products = Product.objects.filter(is_active=True, category__is_active=True)
+#     return random.sample(list(products), 1)[0]
 
 
-def get_same_products(hot_product):
-    same_products = Product.objects.filter(category=hot_product.category, is_active=True).exclude(pk=hot_product.pk)[:3]
-    return same_products
+# def get_same_products(hot_product):
+#     same_products = Product.objects.filter(category=hot_product.category, is_active=True).exclude(pk=hot_product.pk)[:3]
+#     return same_products
 
 
-class ProductView(TemplateView):
-    model = Product
-    template_name = "mainapp/product.html"
-
-    def get_context_data(self, pk, **kwargs):
-        title = "продукты"
-        content = {
-            "title": title,
-            "links_menu": ProductCategory.objects.filter(is_active=True),
-            "product": get_object_or_404(Product, pk=pk),
-            "media_url": settings.MEDIA_URL,
-        }
-        return content
-
-
-# Что здесь ни так? Сайт работает, но контент не передается похоже. Всю голову сломал
-
-# class ProductsView(ProductView):
-#     template_name = "mainapp/products_list.html"
-
-#     def get_context_data(self, pk=None, page=1, **kwargs):
-#         content = super(ProductView, self).get_context_data(**kwargs)
-
-#         if pk is not None:
-#             if str(pk) == str(0):
-#                 category = {"pk": 0, "name": "все"}
-#                 products = Product.objects.filter(is_active=True, category__is_active=True).order_by("price")
-#             else:
-#                 category = get_object_or_404(ProductCategory, pk=pk)
-#                 products = Product.objects.filter(category__pk=pk, is_active=True, category__is_active=True).order_by(
-#                     "price"
-#                 )
-
-#             paginator = Paginator(products, 2)
-#             try:
-#                 products_paginator = paginator.page(page)
-#             except PageNotAnInteger:
-#                 products_paginator = paginator.page(1)
-#             except EmptyPage:
-#                 products_paginator = paginator.page(paginator.num_pages)
-
-#             content["products"] = products_paginator
-#             content["category"] = category
-#             return content
-
-#         hot_product = get_hot_product()
-#         same_products = get_same_products(hot_product)
-#         content["same_products"] = same_products
-#         content["hot_product"] = hot_product
-#         return content
+def get_hot_product_list():
+    products = Product.objects.filter(is_active=True, category__is_active=True).select_related("category")
+    hot_product = random.sample(list(products), 1)[0]
+    hot_list = products.exclude(pk=hot_product.pk)[:3]
+    return (hot_product, hot_list)
 
 
 def products(request, pk=None, page=1):
@@ -109,8 +63,9 @@ def products(request, pk=None, page=1):
             "media_url": settings.MEDIA_URL,
         }
         return render(request, "mainapp/products_list.html", content)
-    hot_product = get_hot_product()
-    same_products = get_same_products(hot_product)
+    # hot_product = get_hot_product()
+    # same_products = get_same_products(hot_product)
+    hot_product, same_products = get_hot_product_list()
     content = {
         "title": title,
         "links_menu": links_menu,
@@ -121,24 +76,15 @@ def products(request, pk=None, page=1):
     return render(request, "mainapp/products.html", content)
 
 
-# def product(request, pk):
-#     title = "продукты"
-#     content = {
-#         "title": title,
-#         "links_menu": ProductCategory.objects.filter(is_active=True),
-#         "product": get_object_or_404(Product, pk=pk),
-#         "media_url": settings.MEDIA_URL,
-#     }
-#     return render(request, "mainapp/product.html", content)
-
-
-# def contact(request):
-#     title = "о нас"
-#     visit_date = timezone.now()
-#     locations = Contact.objects.all()
-#     content = {"title": title, "visit_date": visit_date, "locations": locations}
-#     return render(request, "mainapp/contact.html", content)
-
+def product(request, pk):
+    title = "продукты"
+    content = {
+        "title": title,
+        "links_menu": ProductCategory.objects.filter(is_active=True),
+        "product": get_object_or_404(Product, pk=pk),
+        "media_url": settings.MEDIA_URL,
+    }
+    return render(request, "mainapp/product.html", content)
 
 class ContactView(TemplateView):
     template_name = "mainapp/contact.html"
