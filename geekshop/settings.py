@@ -33,10 +33,12 @@ INSTALLED_APPS = [
     "adminapp",
     "social_django",
     "ordersapp",
-    "debug_toolbar",
     "template_profiler_panel",
     "django_extensions",
 ]
+
+if DEBUG:
+    INSTALLED_APPS.append("debug_toolbar")
 
 # Django Crispy Forms
 #   Official docs | https://django-crispy-forms.readthedocs.io/en/latest/
@@ -47,6 +49,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 AUTH_USER_MODEL = "authnapp.ShopUser"
 
 MIDDLEWARE = [
+    "django.middleware.cache.UpdateCacheMiddleware",  # for entire site caching
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -55,12 +58,14 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "social_django.middleware.SocialAuthExceptionMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    "django.middleware.cache.FetchFromCacheMiddleware",  # for entire site caching
+
 ]
 
+if DEBUG:
+    MIDDLEWARE.append("debug_toolbar.middleware.DebugToolbarMiddleware")
+
 ROOT_URLCONF = "geekshop.urls"
-
-
 
 TEMPLATES = [
     {
@@ -89,10 +94,6 @@ WSGI_APPLICATION = "geekshop.wsgi.application"
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
-    # "default": {
-    #     "ENGINE": "django.db.backends.sqlite3",
-    #     "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-    # }
     "default": {
         "NAME": "geekshop",
         "ENGINE": "django.db.backends.postgresql",
@@ -159,7 +160,7 @@ if DEBUG:
     STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 else:
     STATIC_ROOT = os.path.join(BASE_DIR, "static")
-    
+
 # Media files
 MEDIA_URL = "/media/"
 
@@ -244,7 +245,6 @@ SOCIAL_AUTH_PIPELINE = (
     "social_core.pipeline.user.user_details",
 )
 
-
 # INTERNAL_IPS = ["127.0.0.1"]
 
 # Debgu tool bar settings
@@ -274,3 +274,19 @@ if DEBUG:
         "debug_toolbar.panels.profiling.ProfilingPanel",
         "template_profiler_panel.panels.template.TemplateProfilerPanel",
     ]
+
+CACHE_MIDDLEWARE_ALIAS = "default"
+CACHE_MIDDLEWARE_SECONDS = 120
+CACHE_MIDDLEWARE_KEY_PREFIX = "geekbrains"
+
+# Be carefull if you have Windows! Install Memcached before run project!
+#     https://www.ubergizmo.com/how-to/install-memcached-windows/
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.memcached.MemcachedCache",
+        "LOCATION": "127.0.0.1:11211",
+    }
+}
+
+LOW_CACHE = True
+

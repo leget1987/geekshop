@@ -1,6 +1,6 @@
 {
     // "python.pythonPath": "/home/leget/django/geekshop/venv/bin/python",
-    "python.pythonPath": "/home/leget/.pyenv/versions/3.8.6/envs/geekshop_pyenv/bin/python",
+    "python.pythonPath": "/home/geekbrains/venv/bin/python",
 
     "editor.fontSize": 14,
     "python.formatting.blackArgs": [
