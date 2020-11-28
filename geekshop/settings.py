@@ -59,6 +59,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "social_django.middleware.SocialAuthExceptionMiddleware",
     "django.middleware.cache.FetchFromCacheMiddleware",  # for entire site caching
+
 ]
 
 if DEBUG:
@@ -288,3 +289,4 @@ CACHES = {
 }
 
 LOW_CACHE = True
+
