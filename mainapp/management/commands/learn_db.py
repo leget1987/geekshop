@@ -78,4 +78,5 @@ class Command(BaseCommand):
 
         for orderitem in test_orders:
             print(
-                f"{orderitem.action_order:2}: заказ №{orderitem.pk:3}: {orderitem.product.name:15}: скидка {abs(orderitem.total_discount):9.2f} руб. | {orderitem.order.updated - orderitem.order.created}")
+                f"{orderitem.action_order:2}: заказ №{orderitem.pk:3}: {orderitem.product.name:15}: скидка {abs(orderitem.total_discount):9.2f} руб. | {orderitem.order.updated - orderitem.order.created}"
+            )

@@ -1,5 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.db import connection
+from django.db.models import F
 from django.http import JsonResponse
 from django.shortcuts import HttpResponseRedirect, get_object_or_404, render
 from django.template.loader import render_to_string
@@ -7,8 +9,6 @@ from django.urls import reverse
 
 from basketapp.models import Basket
 from mainapp.models import Product
-from django.db import connection
-from django.db.models import F
 
 
 @login_required
